@@ -4,6 +4,7 @@ pygame.init()
 # Set up some constants
 WIDTH, HEIGHT = 800, 600
 FPS = 60
+SPEED = 5
 
 # Define the Player object
 class Player(pygame.sprite.Sprite):
@@ -32,6 +33,10 @@ all_sprites = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
 
+# Create a background
+background = pygame.image.load('background.jpg')
+background_rect = background.get_rect()
+
 # Game loop
 running = True
 while running:
@@ -43,8 +48,20 @@ while running:
     # Update
     all_sprites.update()
 
+    # Scroll the background
+    if player.vel.x < 0:  # moving left
+        background_rect.x += SPEED
+    elif player.vel.x > 0:  # moving right
+        background_rect.x -= SPEED
+
+    # Wrap the background
+    if background_rect.right < WIDTH:
+        background_rect.x = 0
+    elif background_rect.left > 0:
+        background_rect.x = -background_rect.width + WIDTH
+
     # Draw
-    screen.fill((255, 255, 255))
+    screen.blit(background, background_rect)
     all_sprites.draw(screen)
 
     pygame.display.flip()
